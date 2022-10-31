@@ -3,7 +3,3 @@ export interface Gifts {
     name: string;
     count: number;
 }
-
-// export interface UUIDBrand {
-//     readonly UUID: unique symbol
-// }

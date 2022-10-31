@@ -15,7 +15,7 @@ childRouter
     });
   })
 
-  .post('/', async (req: Request, res:Response): Promise<void> => {
+  .post('/', async (req, res) => {
     await new ChildRecord(req.body).add();
     res.redirect('/child');
 

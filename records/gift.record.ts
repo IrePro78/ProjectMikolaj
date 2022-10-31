@@ -1,7 +1,7 @@
 import {pool} from '../utils/db';
 import {ValidationError} from '../utils/errors';
 import {v4 as uuid} from 'uuid';
-import {FieldPacket, OkPacket, RowDataPacket} from "mysql2";
+import {FieldPacket} from "mysql2";
 
 
 type GiftRecordResults = [GiftRecord[], FieldPacket[]];
@@ -26,7 +26,7 @@ export class GiftRecord {
 
 
   static async listAll(): Promise<GiftRecord[]> {
-    const results = await pool.execute('SELECT * FROM `gifts`') as GiftRecordResults
+    const [results] = await pool.execute('SELECT * FROM `gifts`') as GiftRecordResults;
     return results.map((obj) => new GiftRecord(obj));
   }
 
@@ -41,7 +41,7 @@ export class GiftRecord {
     if (!this.id) {
       this.id = uuid();
     }
-    await pool.execute<OkPacket>('INSERT INTO `gifts` Values(:id, :name, :count)', {
+    await pool.execute('INSERT INTO `gifts` Values(:id, :name, :count)', {
       id: this.id,
       name: this.name,
       count: this.count
@@ -51,7 +51,7 @@ export class GiftRecord {
 
 
   async countGifts(): Promise<number> {
-    const [[{count}]] = await pool.execute<RowDataPacket[]>('SELECT COUNT(*) AS `count` FROM `children` WHERE `giftId` = :id', {
+    const [[{count}]] = await pool.execute('SELECT COUNT(*) AS `count` FROM `children` WHERE `giftId` = :id', {
       id: this.id,
     }) as GiftRecordResults;
     return count;
